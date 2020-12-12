@@ -42,7 +42,7 @@ def find_orientation(neighbours, thetas, noise):
 #uses find_neighbours() and find_orientation()
 @nb.njit
 def update_angle(pos_focal, pos_all, theta_all, radius, N,
-                 noise=0.2):
+                 noise=0.1):
     neigh = find_neighbours(pos_focal, pos_all, radius, N)
     thetanew = find_orientation(neigh, theta_all, noise)
     return(thetanew)
@@ -93,15 +93,16 @@ def initialize(N, L, v):
     velocities = np.zeros((N,2))
     thetas = np.zeros((N,1))
     for i in range(N):
-        positions[i][0] = (L/5) - (L/20) + np.random.random()*(L/10)
-        positions[i][1] = (L/5) - (L/20) + np.random.random()*(L/10)
-        velx = -v + np.random.random()*2*v
-        velocities[i][0] = velx
-        vely = (-1)**(np.random.random()<0.5)*np.sqrt(v*v - velx*velx)
-        velocities[i][1] = vely
-        velocities[i] = np.random.permutation(velocities[i])
-        thetas[i] = np.arctan(velx/vely)
+        #positions[i][0] = (L/5) - (L/20) + np.random.random()*(L/10)
+        #positions[i][1] = (L/5) - (L/20) + np.random.random()*(L/10)
+        positions[i][0] = np.random.random()*(L)
+        positions[i][1] = np.random.random()*(L)
+        theta = np.random.random()*2*np.pi
+        velocities[i][0] = np.cos(theta)*v
+        velocities[i][1] = np.sin(theta)*v
+        thetas[i] = theta
     return(positions, velocities, thetas)
+
 
 
 #make movie of the particles
@@ -112,18 +113,19 @@ def movie_update(frame, pos_arr, mov_arr, l):
                velocity_evolution_arr[frame, :, 0], 
                velocity_evolution_arr[frame, :, 1])
 
-    
+    plt.xlim(0,l)
+    plt.ylim(0,l)
     
     
 
 if __name__ == "__main__":
 
     n = 300
-    l = 250
-    v = 1.0
+    l = 7
+    v = 0.3
     radius = 1
     dt = 1
-    t = 1000
+    t = 100
     
     [positions, velocities, thetas] = initialize(n, l, v)
 
