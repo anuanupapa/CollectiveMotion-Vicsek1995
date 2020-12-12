@@ -1,0 +1,12 @@
+* Rule
+  At each time step a given particle driven with a
+  constant absolute velocity assumes the average direction
+  of motion of the particles in its neighborhood of radius r
+  with some random perturbation added.
+  -*Kinetic Phase Transition from "No transport" to "Finite Net Transport" through spontaneous symmetry breaking of rotational symmetry.*
+* params 
+  noise, density of particles, size of lattice
+* Relation to Ferromagnetism
+  Spins alligning is equivalent to particles with alligned velocity showing
+  collective motion.
+  Temperature is equivalent to the perturbation/noise.
