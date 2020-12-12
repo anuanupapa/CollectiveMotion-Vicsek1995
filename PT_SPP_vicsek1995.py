@@ -5,7 +5,7 @@ import matplotlib.animation
 import matplotlib.pyplot as plt
 import seaborn as sns
 matplotlib.use("Agg")
-
+np.random.seed(1)
 
 
 #Makes the particles move in the direction of v
@@ -33,7 +33,7 @@ def find_neighbours(fp_pos, all_pos, radius, N):
 def find_orientation(neighbours, thetas, noise):
     theta_new = np.sum(thetas[neighbours])/len(neighbours)
     #mean orientation in the neighbourhood + noise
-    return(theta_new + noise*np.random.random())
+    return(theta_new - noise*0.5 + noise*np.random.random())
 
 
 
@@ -42,7 +42,7 @@ def find_orientation(neighbours, thetas, noise):
 #uses find_neighbours() and find_orientation()
 @nb.njit
 def update_angle(pos_focal, pos_all, theta_all, radius, N,
-           noise=0.1):
+                 noise=0.2):
     neigh = find_neighbours(pos_focal, pos_all, radius, N)
     thetanew = find_orientation(neigh, theta_all, noise)
     return(thetanew)
@@ -105,12 +105,13 @@ def initialize(N, L, v):
 
 
 #make movie of the particles
-def movie_update(frame, pos_arr, mov_arr):
+def movie_update(frame, pos_arr, mov_arr, l):
     plt.clf()
     plt.quiver(position_evolution_arr[frame, :, 0], 
                position_evolution_arr[frame, :, 1],
                velocity_evolution_arr[frame, :, 0], 
                velocity_evolution_arr[frame, :, 1])
+
     
     
     
@@ -122,7 +123,7 @@ if __name__ == "__main__":
     v = 1.0
     radius = 1
     dt = 1
-    t = 10000
+    t = 1000
     
     [positions, velocities, thetas] = initialize(n, l, v)
 
@@ -163,11 +164,11 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots()
     Writer = matplotlib.animation.writers['ffmpeg']
-    writer = Writer(fps=10,
+    writer = Writer(fps=5,
                     metadata=dict(artist='Anuran'), bitrate=1800)
 
     ani =matplotlib.animation.FuncAnimation(fig, movie_update,
-                                            fargs = [position_evolution_arr, velocity_evolution_arr],
+                                            fargs = [position_evolution_arr, velocity_evolution_arr, l],
                                             frames=np.arange(0,100,1),
                                             interval=10, repeat=False)
     ani.save('CollectiveMotion_1flock.mp4', writer=writer)
